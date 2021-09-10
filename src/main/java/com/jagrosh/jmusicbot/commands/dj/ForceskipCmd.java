@@ -31,7 +31,7 @@ public class ForceskipCmd extends DJCommand
     public ForceskipCmd(Bot bot)
     {
         super(bot);
-        this.name = "forceskip";
+        this.name = "fs";
         this.help = "skips the current song";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
