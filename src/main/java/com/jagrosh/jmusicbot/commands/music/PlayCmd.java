@@ -31,6 +31,9 @@ import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -43,7 +46,8 @@ public class PlayCmd extends MusicCommand
 {
     private final static String LOAD = "\uD83D\uDCE5"; // 📥
     private final static String CANCEL = "\uD83D\uDEAB"; // 🚫
-    
+    private final static Pattern SECONDS = Pattern.compile("\\?t=(\\d+)");
+
     private final String loadingEmoji;
     
     public PlayCmd(Bot bot)
@@ -105,6 +109,25 @@ public class PlayCmd extends MusicCommand
         
         private void loadSingle(AudioTrack track, AudioPlaylist playlist)
         {
+            if (playlist == null && !ytsearch)
+            {
+                Matcher matcher = SECONDS.matcher(event.getArgs());
+                if (matcher.find())
+                {
+                    try {
+                        long startDur = Long.parseLong(matcher.group(1)) * 1000L;
+                        if (startDur / 1000L > track.getDuration() / 1000L)
+                        {
+                            m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" Trying to set track position to " + startDur / 1000L
+                                    + " seconds, but the track is only " + track.getDuration() / 1000L + " seconds long! Skipping.")).queue();
+                            return;
+                        }
+                        track.setPosition(startDur);
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+
             if(bot.getConfig().isTooLong(track))
             {
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
@@ -114,7 +137,8 @@ public class PlayCmd extends MusicCommand
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
             int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor()))+1;
             String addMsg = FormatUtil.filter(event.getClient().getSuccess()+" Added **"+track.getInfo().title
-                    +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(pos==0?"to begin playing":" to the queue at position "+pos));
+                    +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(track.getPosition()!=0?"at "
+                    + (track.getPosition() / 1000L) +" seconds " : " ")+(pos==0?"to begin playing":"to the queue at position "+pos));
             if(playlist==null || !event.getSelfMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_ADD_REACTION))
                 m.editMessage(addMsg).queue();
             else
