@@ -118,8 +118,8 @@ public class PlayCmd extends MusicCommand
                         long startDur = Long.parseLong(matcher.group(1)) * 1000L;
                         if (startDur / 1000L > track.getDuration() / 1000L)
                         {
-                            m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" Trying to set track position to " + startDur / 1000L
-                                    + " seconds, but the track is only " + track.getDuration() / 1000L + " seconds long! Skipping.")).queue();
+                            m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" Trying to set track position to `" + FormatUtil.formatTime(startDur)
+                                    + "`, but the track is only `" + FormatUtil.formatTime(track.getDuration()) + "` long! Skipping.")).queue();
                             return;
                         }
                         track.setPosition(startDur);
@@ -137,8 +137,8 @@ public class PlayCmd extends MusicCommand
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
             int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor()))+1;
             String addMsg = FormatUtil.filter(event.getClient().getSuccess()+" Added **"+track.getInfo().title
-                    +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(track.getPosition()!=0?"at "
-                    + (track.getPosition() / 1000L) +" seconds " : " ")+(pos==0?"to begin playing":"to the queue at position "+pos));
+                    +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(track.getPosition()!=0?"at `"
+                    + FormatUtil.formatTime(track.getPosition()) +"` " : " ")+(pos==0?"to begin playing":"to the queue at position "+pos));
             if(playlist==null || !event.getSelfMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_ADD_REACTION))
                 m.editMessage(addMsg).queue();
             else
