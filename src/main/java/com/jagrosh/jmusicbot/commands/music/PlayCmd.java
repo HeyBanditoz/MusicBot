@@ -117,7 +117,7 @@ public class PlayCmd extends MusicCommand
                     try
                     {
                         long startDur = Long.parseLong(matcher.group(1)) * 1000L;
-                        if (startDur / 1000L > track.getDuration() / 1000L)
+                        if (startDur > track.getDuration())
                         {
                             m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" Trying to set track position to `" + FormatUtil.formatTime(startDur)
                                     + "`, but the track is only `" + FormatUtil.formatTime(track.getDuration()) + "` long! Skipping.")).queue();
