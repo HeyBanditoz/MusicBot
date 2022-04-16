@@ -114,7 +114,8 @@ public class PlayCmd extends MusicCommand
                 Matcher matcher = SECONDS.matcher(event.getArgs());
                 if (matcher.find())
                 {
-                    try {
+                    try
+                    {
                         long startDur = Long.parseLong(matcher.group(1)) * 1000L;
                         if (startDur / 1000L > track.getDuration() / 1000L)
                         {
