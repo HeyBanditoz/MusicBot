@@ -5,6 +5,7 @@ import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.commands.DJCommand;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 public class PosCmd extends DJCommand
@@ -28,12 +29,12 @@ public class PosCmd extends DJCommand
             long dur = Long.parseLong(event.getArgs()) * 1000L;
             if (dur> track.getDuration())
             {
-                event.replyWarning(FormatUtil.filter(" Trying to set track position to `" + FormatUtil.formatTime(dur)
-                        + "`, but the track is only `" + FormatUtil.formatTime(track.getDuration()) + "` long! Skipping."));
+                event.replyWarning(FormatUtil.filter(" Trying to set track position to `" + TimeUtil.formatTime(dur)
+                        + "`, but the track is only `" + TimeUtil.formatTime(track.getDuration()) + "` long! Skipping."));
                 return;
             }
             track.setPosition(dur);
-            event.replySuccess("Setting position to `" + FormatUtil.formatTime(dur) + "`.");
+            event.replySuccess("Setting position to `" + TimeUtil.formatTime(dur) + "`.");
         } catch (NumberFormatException ex) {
             event.replyError(ex.getMessage());
         }

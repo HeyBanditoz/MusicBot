@@ -5,6 +5,7 @@ import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.commands.DJCommand;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 public class JumpCmd extends DJCommand
@@ -28,12 +29,12 @@ public class JumpCmd extends DJCommand
             long newTime = Long.parseLong(event.getArgs()) * 1000L + track.getPosition();
             if (newTime > track.getDuration())
             {
-                event.replyWarning(FormatUtil.filter("Trying to set track position to `" + FormatUtil.formatTime(newTime)
-                        + "`, but the track is only `" + FormatUtil.formatTime(track.getDuration()) + "` long! Skipping."));
+                event.replyWarning(FormatUtil.filter("Trying to set track position to `" + TimeUtil.formatTime(newTime)
+                        + "`, but the track is only `" + TimeUtil.formatTime(track.getDuration()) + "` long! Skipping."));
                 return;
             }
             track.setPosition(newTime);
-            event.replySuccess("Jumping ahead `" + FormatUtil.formatTime(Long.parseLong(event.getArgs()) * 1000L) + "` seconds to `" + FormatUtil.formatTime(track.getPosition()) + "`.");
+            event.replySuccess("Jumping ahead `" + TimeUtil.formatTime(Long.parseLong(event.getArgs()) * 1000L) + "` seconds to `" + TimeUtil.formatTime(track.getPosition()) + "`.");
         } catch (NumberFormatException ex) {
             event.replyError(ex.getMessage());
         }
